@@ -5,8 +5,6 @@
  * Created as part of the Duration + ofxTimeline project
  * Supported by YCAM InterLab Guest Research Project ( http://interlab.ycam.jp/en/ )
  *
- * 
- *
  */
 
 #pragma once
