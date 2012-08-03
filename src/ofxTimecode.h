@@ -15,8 +15,8 @@ class ofxTimecode {
   public:
     ofxTimecode();
     
-    void setFPS(int fps); //default is 30;
-    int getFPS();
+    void setFPS(float fps); //default is 30;
+    float getFPS();
     
     //these functions expect format HH:MM:SS:FR
     //and negative value if improperly formatted
@@ -36,6 +36,6 @@ class ofxTimecode {
     string timecodeForFrame(int frame);
     
   protected:
-    int fps;
+    float fps;
     bool decodeString(string time, int* times);
 };

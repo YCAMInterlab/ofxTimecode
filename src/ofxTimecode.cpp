@@ -13,7 +13,7 @@ ofxTimecode::ofxTimecode(){
     fps = 30;
 }
     
-void ofxTimecode::setFPS(int _fps){
+void ofxTimecode::setFPS(float _fps){
     if(fps < 1){
         ofLogError("ofxTimecode::setFPS invalid FPS set");
         return;
@@ -21,7 +21,7 @@ void ofxTimecode::setFPS(int _fps){
 	fps = _fps;
 }
 
-int ofxTimecode::getFPS(){
+float ofxTimecode::getFPS(){
     return fps;
 }
     
@@ -44,7 +44,7 @@ int ofxTimecode::frameForMillis(long timeInMillis){
 }
 
 float ofxTimecode::secondsForFrame(int frame){
-	return frame / float(fps);
+	return frame / fps;
 }
 
 long ofxTimecode::millisForFrame(int frame){
@@ -70,7 +70,7 @@ string ofxTimecode::timecodeForSeconds(float seconds){
     
 string ofxTimecode::timecodeForFrame(int frame){
 	char buf[512];
-    sprintf(buf, "%02d:%02d:%02d:%d", frame / (60 * 60 * fps), (frame / (60 * fps)) % 60, (frame / fps) % 60, frame % fps );
+    sprintf(buf, "%02d:%02d:%02d:%d", int(frame / (60 * 60 * fps)), int(frame / (60 * fps)) % 60, int(frame / fps) % 60, frame % int(fps) );
     return string(buf);
 }
 
