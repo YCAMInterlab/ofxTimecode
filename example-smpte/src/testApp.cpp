@@ -7,6 +7,8 @@ void testApp::setup(){
     ofBackground(0);
     
     timecode.setFPS(30);
+    
+
 }
 
 //--------------------------------------------------------------

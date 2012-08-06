@@ -18,7 +18,7 @@ class ofxTimecode {
     void setFPS(float fps); //default is 30;
     float getFPS();
     
-    //these functions expect format HH:MM:SS:FR
+    //these functions expect format HH:MM:SS;MLS
     //and negative value if improperly formatted
 	long millisForTimecode(string timecode);
     float secondsForTimecode(string timecode);
