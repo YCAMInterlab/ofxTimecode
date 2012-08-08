@@ -70,17 +70,17 @@ string ofxTimecode::timecodeForFrame(int frame){
 //                      Conversions involving millisecond-based timecodes
 //------------------------------------------------------------------------------------------
 
-//expects format HH:MM:SS:MS (last field is 3 digits)
+//expects format HH:MM:SS,MS (last field is 3 digits)
 int ofxTimecode::frameForMSTimecode(string timecode){
     return frameForMillis(millisforMSTimecode(timecode));
 }
 
-//expects format HH:MM:SS:MS (last field is 3 digits)
+//expects format HH:MM:SS,MS (last field is 3 digits)
 float ofxTimecode::secondsforMSTimecode(string timecode){
     return float((millisForMSTimecode(timecode))/1000);
 }
 
-//expects format HH:MM:SS:MS (last field is 3 digits)
+//expects format HH:MM:SS,MS (last field is 3 digits)
 long ofxTimecode::millisForMSTimecode(string timecode){
     int times[4];
     if(decodeString(timecode, times)){
@@ -90,20 +90,20 @@ long ofxTimecode::millisForMSTimecode(string timecode){
     return -1;
 }
 
-//Returns a timecode in the format HH:MM:SS:MS
+//Returns a timecode in the format HH:MM:SS,MS
 string ofxTimecode::MSTimecodeForFrame(int frame){
     return MSTimecodeForMillis(millisForFrame(frame));
 }
 
-//Returns a timecode in the format HH:MM:SS:MS
+//Returns a timecode in the format HH:MM:SS,MS
 string ofxTimecode::MSTimecodeForSeconds(float seconds){
     return MSTimecodeForMillis(seconds * 1000);
 }
 
-//Returns a timecode in the format HH:MM:SS:FR
+//Returns a timecode in the format HH:MM:SS,MS
 string ofxTimecode::MSTimecodeForMillis(int millis){
 	char buf[512];
-    sprintf(buf, "%02d:%02d:%02d:%d", millis / (60 * 60 * 1000), (millis / (60 * 1000)) % 60, (millis / 1000) % 60, millis % 1000 );
+    sprintf(buf, "%02d:%02d:%02d,%d", millis / (60 * 60 * 1000), (millis / (60 * 1000)) % 60, (millis / 1000) % 60, millis % 1000 );
     return string(buf);
 }
 
