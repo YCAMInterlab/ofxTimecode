@@ -13,7 +13,7 @@ ofxTimecode::ofxTimecode(){
     fps = 30;
 }
     
-void ofxTimecode::setFPS(float _fps){
+void ofxTimecode::setFPS(int _fps){
     if(fps < 1){
         ofLogError("ofxTimecode::setFPS invalid FPS set");
         return;
@@ -21,43 +21,95 @@ void ofxTimecode::setFPS(float _fps){
 	fps = _fps;
 }
 
-float ofxTimecode::getFPS(){
+int ofxTimecode::getFPS(){
     return fps;
 }
-    
-//expects format HH:MM:SS:MLS
-long ofxTimecode::millisForTimecode(string timecode){
+
+//------------------------------------------------------------------------------------------
+//                        Conversions involving frame-based timecodes
+//------------------------------------------------------------------------------------------
+
+//expects format HH:MM:SS:FR
+int ofxTimecode::frameForTimecode(string timecode){
     int times[4];
     if(decodeString(timecode, times)){
-               //hours						
-    	return times[0] * 60 * 60 * 1000 + 
-               //minutes
-               times[1] * 60 * 1000 +
-               //seconds
-               times[2] * 1000 +
-               //millis
-               times[3];
-        
+        //hours					  //minutes				//seconds		 //frames
+        return times[0] * fps * 60 * 60 + times[1] * fps * 60 + times[2] * fps + times[3];
     }
-	return -1;
+    return -1;
 }
 
-string ofxTimecode::timecodeForMillis(long millis){
-    char buf[512];
-	sprintf(buf, "%02d:%02d:%02d:%03d", int(millis / (60 * 60 * 1000)),  //hours
-            						    int((millis / (60 * 1000)) % 60), //minutes
-            						    int((millis / 1000) % 60), 		//seconds		
-                                        int(millis % 1000));
-//    sprintf(buf, "%ld", millis);
-
-    return string(buf);
+//expects format HH:MM:SS:FR
+long ofxTimecode::millisForTimecode(string timecode){
+    return millisForFrame(frameForTimecode(timecode));
 }
 
 //expects format HH:MM:SS:FR
 float ofxTimecode::secondsForTimecode(string timecode){
-    return millisForTimecode(timecode) / 1000.;
-    //return secondsForFrame(frameForTimecode(timecode));
+    return secondsForFrame(frameForTimecode(timecode));
 }
+
+//Returns a timecode in the format HH:MM:SS:FR
+string ofxTimecode::timecodeForMillis(long millis){
+    return timecodeForFrame(millis * fps / 1000 );
+}
+
+//Returns a timecode in the format HH:MM:SS:FR
+string ofxTimecode::timecodeForSeconds(float seconds){
+    return timecodeForFrame(seconds * fps);
+}
+
+//Returns a timecode in the format HH:MM:SS:FR
+string ofxTimecode::timecodeForFrame(int frame){
+	char buf[512];
+    sprintf(buf, "%02d:%02d:%02d:%d", frame / (60 * 60 * fps), (frame / (60 * fps)) % 60, (frame / fps) % 60, frame % fps );
+    return string(buf);
+}
+
+//------------------------------------------------------------------------------------------
+//                      Conversions involving millisecond-based timecodes
+//------------------------------------------------------------------------------------------
+
+//expects format HH:MM:SS:MS (last field is 3 digits)
+int ofxTimecode::frameForMSTimecode(string timecode){
+    return frameForMillis(millisforMSTimecode(timecode));
+}
+
+//expects format HH:MM:SS:MS (last field is 3 digits)
+float ofxTimecode::secondsforMSTimecode(string timecode){
+    return float((millisForMSTimecode(timecode))/1000);
+}
+
+//expects format HH:MM:SS:MS (last field is 3 digits)
+long ofxTimecode::millisForMSTimecode(string timecode){
+    int times[4];
+    if(decodeString(timecode, times)){
+        //hours                             //minutes             //seconds         //millis
+        return times[0] * 1000 * 60 * 60 + times[1] * 1000 * 60 + times[2] * 1000 + times[3];
+    }
+    return -1;
+}
+
+//Returns a timecode in the format HH:MM:SS:MS
+string ofxTimecode::MSTimecodeForFrame(int frame){
+    return MSTimecodeForMillis(millisForFrame(frame));
+}
+
+//Returns a timecode in the format HH:MM:SS:MS
+string ofxTimecode::MSTimecodeForSeconds(float seconds){
+    return MSTimecodeForMillis(seconds * 1000);
+}
+
+//Returns a timecode in the format HH:MM:SS:FR
+string ofxTimecode::MSTimecodeForMillis(int millis){
+	char buf[512];
+    sprintf(buf, "%02d:%02d:%02d:%d", millis / (60 * 60 * 1000), (millis / (60 * 1000)) % 60, (millis / 1000) % 60, millis % 1000 );
+    return string(buf);
+}
+
+//------------------------------------------------------------------------------------------
+//                            Conversions not involving timecodes
+//------------------------------------------------------------------------------------------
 
 int ofxTimecode::frameForSeconds(float timeInSeconds){
     return timeInSeconds * fps;
@@ -68,27 +120,17 @@ int ofxTimecode::frameForMillis(long timeInMillis){
 }
 
 float ofxTimecode::secondsForFrame(int frame){
-	return frame / fps;
+	return frame / float(fps);
 }
 
 long ofxTimecode::millisForFrame(int frame){
 	return frame * 1000 / fps;    
 }
 
-int ofxTimecode::frameForTimecode(string timecode){
-    return frameForMillis(millisForTimecode(timecode));
-}
 
-string ofxTimecode::timecodeForSeconds(float seconds){
-    return timecodeForMillis(seconds*1000);
-}
-    
-string ofxTimecode::timecodeForFrame(int frame){
-    return timecodeForMillis(millisForFrame(frame));
-}
-
+//Decodes a timecode string into its four components: HH, MM, SS, and FR/MS
 bool ofxTimecode::decodeString(string time, int* times){
-    vector<string> split = ofSplitString(time, ":");
+    vector<string> split = ofSplitString(time, ":,");
     if(split.size() != 4){
         ofLogError("ofxTimecode::decodeString -- incorrect timecode");
         return false;
