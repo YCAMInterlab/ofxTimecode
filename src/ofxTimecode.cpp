@@ -88,6 +88,7 @@ string ofxTimecode::timecodeForFrame(int frame){
 }
 
 bool ofxTimecode::decodeString(string time, int* times){
+	ofStringReplace(time, ",", ":");
     vector<string> split = ofSplitString(time, ":");
     if(split.size() != 4){
         ofLogError("ofxTimecode::decodeString -- incorrect timecode");
