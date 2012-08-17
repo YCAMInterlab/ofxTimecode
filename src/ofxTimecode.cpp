@@ -42,11 +42,12 @@ long ofxTimecode::millisForTimecode(string timecode){
 	return -1;
 }
 
-string ofxTimecode::timecodeForMillis(long millis){
+string ofxTimecode::timecodeForMillis(long millis, string millisDelimiter){
     char buf[512];
-	sprintf(buf, "%02d:%02d:%02d:%03d", int(millis / (60 * 60 * 1000)),  //hours
+	sprintf(buf, "%02d:%02d:%02d%s%03d", int(millis / (60 * 60 * 1000)),  //hours
             						    int((millis / (60 * 1000)) % 60), //minutes
-            						    int((millis / 1000) % 60), 		//seconds		
+            						    int((millis / 1000) % 60), 		//seconds
+            							millisDelimiter.c_str(),
                                         int(millis % 1000));
 //    sprintf(buf, "%ld", millis);
 
@@ -56,7 +57,6 @@ string ofxTimecode::timecodeForMillis(long millis){
 //expects format HH:MM:SS:FR
 float ofxTimecode::secondsForTimecode(string timecode){
     return millisForTimecode(timecode) / 1000.;
-    //return secondsForFrame(frameForTimecode(timecode));
 }
 
 int ofxTimecode::frameForSeconds(float timeInSeconds){
@@ -79,16 +79,17 @@ int ofxTimecode::frameForTimecode(string timecode){
     return frameForMillis(millisForTimecode(timecode));
 }
 
-string ofxTimecode::timecodeForSeconds(float seconds){
-    return timecodeForMillis(seconds*1000);
+string ofxTimecode::timecodeForSeconds(float seconds, string millisDelimiter){
+    return timecodeForMillis(seconds*1000, millisDelimiter);
 }
     
-string ofxTimecode::timecodeForFrame(int frame){
-    return timecodeForMillis(millisForFrame(frame));
+string ofxTimecode::timecodeForFrame(int frame, string millisDelimiter){
+    return timecodeForMillis(millisForFrame(frame), millisDelimiter);
 }
 
 bool ofxTimecode::decodeString(string time, int* times){
 	ofStringReplace(time, ",", ":");
+    ofStringReplace(time, ";", ":");
     vector<string> split = ofSplitString(time, ":");
     if(split.size() != 4){
         ofLogError("ofxTimecode::decodeString -- incorrect timecode");
