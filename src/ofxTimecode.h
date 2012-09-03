@@ -20,8 +20,8 @@ class ofxTimecode {
     
     //these functions expect format HH:MM:SS:MLS
     //and negative value if improperly formatted
-	long millisForTimecode(string timecode);
-    float secondsForTimecode(string timecode);
+	static long millisForTimecode(string timecode);
+    static float secondsForTimecode(string timecode);
     int frameForTimecode(string timecode);
     
     int frameForSeconds(float timeInSeconds);
@@ -37,5 +37,5 @@ class ofxTimecode {
     
   protected:
     float fps;
-    bool decodeString(string time, int* times);
+    static bool decodeString(string time, int* times);
 };
