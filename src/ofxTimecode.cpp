@@ -26,7 +26,7 @@ float ofxTimecode::getFPS(){
 }
     
 //expects format HH:MM:SS:MLS
-long ofxTimecode::millisForTimecode(string timecode){
+unsigned long ofxTimecode::millisForTimecode(string timecode){
     int times[4];
     if(decodeString(timecode, times)){
                //hours						
@@ -42,7 +42,7 @@ long ofxTimecode::millisForTimecode(string timecode){
 	return -1;
 }
 
-string ofxTimecode::timecodeForMillis(long millis, string millisDelimiter){
+string ofxTimecode::timecodeForMillis(unsigned long millis, string millisDelimiter){
     char buf[512];
 	sprintf(buf, "%02d:%02d:%02d%s%03d", int(millis / (60 * 60 * 1000)),  //hours
             						    int((millis / (60 * 1000)) % 60), //minutes
@@ -63,7 +63,7 @@ int ofxTimecode::frameForSeconds(float timeInSeconds){
     return timeInSeconds * fps;
 }
 
-int ofxTimecode::frameForMillis(long timeInMillis){
+int ofxTimecode::frameForMillis(unsigned long timeInMillis){
     return timeInMillis * fps / 1000;
 }
 
@@ -71,7 +71,7 @@ float ofxTimecode::secondsForFrame(int frame){
 	return frame / fps;
 }
 
-long ofxTimecode::millisForFrame(int frame){
+unsigned long ofxTimecode::millisForFrame(int frame){
 	return frame * 1000 / fps;    
 }
 
