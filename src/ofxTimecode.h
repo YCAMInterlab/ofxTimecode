@@ -20,18 +20,18 @@ class ofxTimecode {
     
     //these functions expect format HH:MM:SS:MLS
     //and negative value if improperly formatted
-	static unsigned long millisForTimecode(string timecode);
+	static unsigned long long millisForTimecode(string timecode);
     static float secondsForTimecode(string timecode);
     int frameForTimecode(string timecode);
     
     int frameForSeconds(float timeInSeconds);
-    int frameForMillis(unsigned long timeInMillis);
+    int frameForMillis(unsigned long long timeInMillis);
     
     float secondsForFrame(int frame);
-    unsigned long millisForFrame(int frame);
+    unsigned long long millisForFrame(int frame);
     
     //returns format HH:MM:SS:FR
-    static string timecodeForMillis(unsigned long millis, string millisDelimiter = ":");
+    static string timecodeForMillis(unsigned long long millis, string millisDelimiter = ":");
     static string timecodeForSeconds(float seconds, string millisDelimiter = ":");
     string timecodeForFrame(int frame, string millisDelimiter = ":");
     
