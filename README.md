@@ -1,4 +1,4 @@
-#ofxTimecode
+# ofxTimecode
 
 ofxTimecode is a simple class for converting between frames, seconds, milliseconds, and SMPTE representation (HH:MM:SS:FRAME) for time.
 
